@@ -1,0 +1,12 @@
+# statestore.yaml for Azure Blob storage component
+componentType: state.azure.blobstorage
+version: v1
+metadata:
+  - name: accountName
+    value: sudalaivj
+  - name: containerName
+    value: mycontainer
+  - name: azureClientId
+    value: 9291173a-70f6-4845-bbe5-fc2f5e9b5274
+scopes:
+  - nodeapp

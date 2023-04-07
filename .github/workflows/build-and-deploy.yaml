@@ -14,6 +14,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  bicepfilePath: .deploy/main.bicep
 jobs:
   set-env:
     name: Set Environment Variables
@@ -86,6 +87,14 @@ jobs:
         run: |
           echo ::set-output name=image-${{ matrix.services.appName }}::${{ env.REGISTRY }}/$GITHUB_REPOSITORY/${{ matrix.services.appName }}:sha-${{ needs.set-env.outputs.version }} | tr '[:upper:]' '[:lower:]'
 
+  bicep-template:
+    steps:
+      - name: bicep-build-output
+        uses: Azure/bicep-build-action@v1.0.1
+        with:
+            bicepFilePath: ${{  env.bicepfilePath }}
+            outputFilePath: ./main.bicep
+
   deploy:
     if: github.repository != 'Azure-samples/container-apps-store-api-microservice'
     runs-on: ubuntu-latest
@@ -108,7 +117,7 @@ jobs:
         with:
           inlineScript: |
             az group create -g ${{ secrets.RESOURCE_GROUP }} -l canadacentral
-            az deployment group create -g ${{ secrets.RESOURCE_GROUP }} -f deploy/main.bicep \
+            az deployment group create -g ${{ secrets.RESOURCE_GROUP }} --template-file ${{  env.bicepfilePath }} \
              -p \
                 minReplicas=0 \
                 nodeImage='${{ needs.package-services.outputs.containerImage-node }}' \
