@@ -98,6 +98,10 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Check
+        run: pwd && ls
+      
 
       - name: Deploy bicep
         uses: azure/CLI@v1
